@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Godot's text_editor/external/exec_path.
+# Configure exec_flags as:  {project} {file} {line}
+#
+# Preferred path: hand the file to the nvim already running in the editor's
+# Nvim tab. Fallback: this project has no godot_nvim addon (the setting is
+# global, addons are per-project), so open a standalone terminal instead —
+# without it, scripts would silently fail to open anywhere but here.
+set -euo pipefail
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+project="${1:-}"; file="${2:-}"; line="${3:-1}"
+[ -n "$file" ] || exit 0
+
+sock=$("$here/godot-nvim-sock" "$project")
+if [ -S "$sock" ]; then
+	exec nvim --server "$sock" --remote-send "<C-\\><C-N>:edit +${line} ${file}<CR>"
+fi
+
+# GODOT_NVIM_TERMINAL overrides detection (also lets this be tested).
+term="${GODOT_NVIM_TERMINAL:-}"
+if [ -z "$term" ]; then
+	for t in wezterm kitty; do
+		if command -v "$t" >/dev/null; then term=$t; break; fi
+	done
+fi
+case "$term" in
+	"")      echo "godot-nvim: no embedded nvim, no terminal found" >&2; exit 1 ;;
+	wezterm) exec wezterm start -- nvim "+${line}" "$file" ;;
+	kitty)   exec kitty nvim "+${line}" "$file" ;;
+	*)       exec "$term" nvim "+${line}" "$file" ;;
+esac

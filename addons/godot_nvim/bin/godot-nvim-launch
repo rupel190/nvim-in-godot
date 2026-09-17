@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Run BY the Godot plugin, inside Godotty's Terminal node.
+# Starts nvim listening on a per-project socket so Godot can send it files.
+set -euo pipefail
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+sock=$("$here/godot-nvim-sock" "$PWD")
+rm -f "$sock"
+exec nvim --listen "$sock"

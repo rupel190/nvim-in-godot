@@ -1,0 +1,6 @@
+# Godot's import cache
+.godot/
+
+# Godotty is a separate MIT-licensed addon and a hard dependency, not our code.
+# Install it from the Asset Library; it is ~110 MB of prebuilt binaries.
+addons/godotty/

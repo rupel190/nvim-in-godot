@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Prints the nvim listen-socket path for a given Godot project directory.
+# Both the launcher and the open-shim derive the socket through THIS script,
+# so the two can never drift apart.
+set -euo pipefail
+project="${1:?usage: godot-nvim-sock <project-dir>}"
+id=$(printf '%s' "$project" | cksum | cut -d' ' -f1)
+printf '%s/godot-nvim-%s.sock\n' "${XDG_RUNTIME_DIR:-/tmp}" "$id"
