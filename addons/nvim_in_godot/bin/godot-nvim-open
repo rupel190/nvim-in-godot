@@ -3,7 +3,7 @@
 # Configure exec_flags as:  {project} {file} {line}
 #
 # Preferred path: hand the file to the nvim already running in the editor's
-# Nvim tab. Fallback: this project has no godot_nvim addon (the setting is
+# Nvim tab. Fallback: this project has no nvim_in_godot addon (the setting is
 # global, addons are per-project), so open a standalone terminal instead —
 # without it, scripts would silently fail to open anywhere but here.
 set -euo pipefail

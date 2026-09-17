@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 
-## Companion to godot_nvim. Exists ONLY to notice that a Script was opened and
+## Companion to nvim_in_godot. Exists ONLY to notice that a Script was opened and
 ## bring the Nvim workspace forward.
 ##
 ## WHY A SECOND PLUGIN instead of _handles() on the main-screen one:
@@ -16,7 +16,7 @@ extends EditorPlugin
 ##     AFTER the external editor was already spawned at :3298.
 
 const MAIN_SCREEN_NAME := "Nvim"
-const MAIN_PLUGIN := "godot_nvim"
+const MAIN_PLUGIN := "nvim_in_godot"
 
 
 func _has_main_screen() -> bool:

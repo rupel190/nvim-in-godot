@@ -1,4 +1,4 @@
-# godot-nvim
+# nvim-in-godot
 
 Neovim as the script editor inside the Godot editor, on a main-screen tab next to
 2D / 3D / Script.
@@ -30,8 +30,8 @@ engine. This project is the plumbing that turns it into a script editor.
 **2. Install this addon.** Copy both directories into your project:
 
 ```
-addons/godot_nvim/
-addons/godot_nvim_focus/
+addons/nvim_in_godot/
+addons/nvim_in_godot_focus/
 ```
 
 **3. Enable both** under *Project → Project Settings → Plugins*. Both are
@@ -43,7 +43,7 @@ External*:
 | Setting | Value |
 |---|---|
 | Use External Editor | on |
-| Exec Path | `<project>/addons/godot_nvim/bin/godot-nvim-open` |
+| Exec Path | `<project>/addons/nvim_in_godot/bin/godot-nvim-open` |
 | Exec Flags | `{project} {file} {line}` |
 
 The path may point at *any* copy of the shim. It derives the target socket from
@@ -84,10 +84,47 @@ cannot become a crash loop.
 The Godot editor runs a GDScript language server on `127.0.0.1:6005` and a Debug
 Adapter Protocol server on `127.0.0.1:6006`. Both require the editor to be open.
 
-[`nvim/godot.lua`](nvim/godot.lua) is a lazy.nvim plugin spec covering both. It
-is written for LazyVim but the substance is portable.
+Neither is a standalone process you install — the editor *is* the server, so it
+must be open for either half to work.
 
-The parts worth knowing about:
+[`nvim/godot.lua`](nvim/godot.lua) is a ready-made configuration for both.
+
+### With lazy.nvim or LazyVim
+
+Copy it into your plugin directory:
+
+```sh
+cp nvim/godot.lua ~/.config/nvim/lua/plugins/godot.lua
+```
+
+Then run `:Lazy sync`. It installs `mfussenegger/nvim-dap`, which is not part of
+stock LazyVim.
+
+### With another plugin manager
+
+The file returns a lazy.nvim spec, but the substance is two independent pieces
+you can lift out:
+
+1. the `gdscript` table under `opts.servers` — a plain `vim.lsp.config()` table —
+   together with the supervisor functions defined above it, and its
+   `opts.setup.gdscript` hook, which is what arms the server;
+2. the body of the `nvim-dap` `config` function, which needs nothing but
+   `require("dap")`.
+
+Install `mfussenegger/nvim-dap` through your own manager and run the second piece
+after it loads.
+
+### Checking it works
+
+With the Godot editor open on the project, open a `.gd` file and run
+`:checkhealth vim.lsp`. A `gdscript` client should be listed, with `Command`
+showing a *function reference* rather than a command line — that is what confirms
+the TCP path instead of a subprocess.
+
+`<leader>cG` forces a reconnect and reports what happened. `:lsp restart gdscript`
+restarts the client outright.
+
+### What to watch out for
 
 - **The LSP must be given a TCP connection, not a subprocess.** Use
   `cmd = vim.lsp.rpc.connect("127.0.0.1", 6005)`. A common workaround is
@@ -114,11 +151,11 @@ Neovim 0.12 ships a built-in `:lsp` command, and nvim-lspconfig skips defining
 
 ```
 Godot editor (unmodified)
-└── addons/godot_nvim         main-screen tab
-      └── Godotty Terminal    PTY + terminal emulation
+└── addons/nvim_in_godot            main-screen tab
+      └── Godotty Terminal          PTY + terminal emulation
             └── nvim --listen <socket>
-                  ↑
-      addons/godot_nvim/bin/godot-nvim-open   ← Godot's exec_path
+                        ↑
+        addons/nvim_in_godot/bin/godot-nvim-open   ← Godot's exec_path
 ```
 
 Godot's external-editor setting suppresses the built-in script editor and hands
@@ -141,7 +178,7 @@ plugin would displace `ScriptEditorPlugin` entirely, `ScriptEditor::edit()` woul
 never run, and the external editor would never be invoked.
 
 `get_handling_sub_editors()` is additive and collects only plugins *without* a
-main screen. `godot_nvim_focus` is therefore a screen-less companion that handles
+main screen. `nvim_in_godot_focus` is therefore a screen-less companion that handles
 `Script` and runs after the external editor has already been launched. It does
 nothing but bring the tab forward.
 
@@ -176,8 +213,8 @@ The repository root is a Godot project, so it can be opened directly to work on
 the addon. `main.tscn` exists only to give the debugger something to launch.
 
 ```
-addons/godot_nvim/        the main-screen plugin and helper scripts
-addons/godot_nvim_focus/  the companion that switches workspace
+addons/nvim_in_godot/        the main-screen plugin and helper scripts
+addons/nvim_in_godot_focus/  the companion that switches workspace
 nvim/godot.lua            Neovim LSP + DAP configuration
 main.gd, main.tscn        a trivial scene for testing the debugger
 ```

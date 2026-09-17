@@ -207,7 +207,7 @@ func _launch_command() -> String:
 	# and needs nothing on PATH. The PATH fallback stays for anyone who would rather
 	# install the scripts system-wide.
 	var bundled := ProjectSettings.globalize_path(
-		"res://addons/godot_nvim/bin/godot-nvim-launch")
+		"res://addons/nvim_in_godot/bin/godot-nvim-launch")
 	if FileAccess.file_exists(bundled):
 		return bundled
 	return LAUNCH_CMD

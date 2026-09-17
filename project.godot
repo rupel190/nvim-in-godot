@@ -16,4 +16,4 @@ config/features=PackedStringArray("4.7")
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_nvim/plugin.cfg", "res://addons/godot_nvim_focus/plugin.cfg")
+enabled=PackedStringArray("res://addons/nvim_in_godot/plugin.cfg", "res://addons/nvim_in_godot_focus/plugin.cfg")
