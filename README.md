@@ -10,6 +10,12 @@ Neovim at the right line. Saving it makes Godot reload the script.
 
 It requires no engine patches and runs on stock Godot.
 
+![Neovim running as a main-screen tab inside the Godot editor, beside 2D, 3D and Script](docs/nvim-tab.webp)
+
+*The **Nvim** tab, selected. Real Neovim in the editor viewport — here with the
+`<leader>d` debug menu that [`nvim/godot.lua`](nvim/godot.lua) ships, and Godot's
+own Breakpoints dock listing the same file beside it.*
+
 ## Requirements
 
 | | |
@@ -21,6 +27,11 @@ It requires no engine patches and runs on stock Godot.
 
 Godotty does the heavy lifting — it is a Rust GDExtension wrapping ghostty's VT
 engine. This project is the plumbing that turns it into a script editor.
+
+![A fish shell running in Godotty's Terminal tab inside the Godot editor](docs/terminal-tab.webp)
+
+*The **Terminal** tab is Godotty's own, not this addon's — a plain shell, to show
+the PTY works. This project adds the **Nvim** tab beside it.*
 
 ## Installation
 
@@ -121,8 +132,19 @@ With the Godot editor open on the project, open a `.gd` file and run
 showing a *function reference* rather than a command line — that is what confirms
 the TCP path instead of a subprocess.
 
+![The gdscript language server listed in Neovim, with cmd shown as a function reference](docs/lsp-config.webp)
+
+*`cmd: <function>` is the thing to look for. A command line there would mean
+Neovim is supervising a subprocess instead of holding the socket.*
+
 `<leader>cG` forces a reconnect and reports what happened. `:lsp restart gdscript`
 restarts the client outright.
+
+![nvim-dap's configuration picker offering Launch main scene and Launch current scene](docs/dap-launch.webp)
+
+*The debug half: `<leader>dc` offers the two configurations
+[`nvim/godot.lua`](nvim/godot.lua) defines, so the project runs from Neovim
+without touching the editor.*
 
 ### What to watch out for
 
@@ -215,8 +237,10 @@ the addon. `main.tscn` exists only to give the debugger something to launch.
 ```
 addons/nvim_in_godot/        the main-screen plugin and helper scripts
 addons/nvim_in_godot_focus/  the companion that switches workspace
-nvim/godot.lua            Neovim LSP + DAP configuration
-main.gd, main.tscn        a trivial scene for testing the debugger
+nvim/godot.lua               Neovim LSP + DAP configuration
+main.gd, main.tscn           a trivial scene for testing the debugger
+docs/                        README screenshots; .gdignore keeps the
+                             importer out, so they stay plain files
 ```
 
 ## License
